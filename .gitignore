@@ -1,0 +1,28 @@
+# Byte-compiled / optimized files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Unit tests / coverage reports
+.coverage
+.coverage.*
+.cache
+.pytest_cache/
+htmlcov/
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE configuration files (PyCharm, VSCode)
+.idea/
+.vscode/
+
+# OS generated files
+.DS_Store
+Thumbs.db
