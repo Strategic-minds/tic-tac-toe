@@ -225,7 +225,7 @@ async def game_loop(writer_local):
                 running = False
                 break
 
-        if not game_over and current_turn == player_id:
+        if not game_over and player_id is not None and current_turn == player_id:
             if current_time - last_ai_move_time >= AI_THINK_DELAY:
                 status_message = f"PPO AI (Player {player_id}) is thinking..."
                 display_status(status_message)

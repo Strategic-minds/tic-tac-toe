@@ -4,13 +4,14 @@ import json
 import sys
 import numpy as np
 import logging
+import argparse
 # Adjust import if necessary
 from tic_tac_toe_logic import (
     BOARD_SIZE, PLAYER_X, PLAYER_O, EMPTY # We don't need game logic functions here, only constants/board size
 )
 
 # --- Configuration ---
-SERVER_HOST = '192.168.1.190' # Change to server's IP if not running locally
+# SERVER_HOST = '192.168.1.190' # Change to server's IP if not running locally
 SERVER_PORT = 8888
 logging.basicConfig(level=logging.INFO)
 
@@ -240,12 +241,12 @@ async def game_loop(writer_local):
     logging.info("Pygame quit.")
 
 
-async def main():
+async def main(host_ip):
     """Main function to connect and start client tasks."""
     global reader, writer, screen, font, status_message
     try:
-        reader, writer = await asyncio.open_connection(SERVER_HOST, SERVER_PORT)
-        logging.info(f"Connected to server at {SERVER_HOST}:{SERVER_PORT}")
+        reader, writer = await asyncio.open_connection(host_ip, SERVER_PORT)
+        logging.info(f"Connected to server at {host_ip}:{SERVER_PORT}")
         status_message = "Connected, waiting for game..."
 
         # Initialize Pygame *after* successful connection attempt
@@ -262,8 +263,8 @@ async def main():
         await asyncio.gather(listener_task, gameloop_task)
 
     except ConnectionRefusedError:
-        logging.error(f"Connection refused. Is the server running at {SERVER_HOST}:{SERVER_PORT}?")
-        print(f"Error: Could not connect to the server at {SERVER_HOST}:{SERVER_PORT}. Please ensure the server is running.")
+        logging.error(f"Connection refused. Is the server running at {host_ip}:{SERVER_PORT}?")
+        print(f"Error: Could not connect to the server at {host_ip}:{SERVER_PORT}. Please ensure the server is running.")
     except Exception as e:
         logging.error(f"An error occurred in main: {e}", exc_info=True)
         print(f"An unexpected error occurred: {e}")
@@ -280,4 +281,15 @@ async def main():
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    # --- Argument Parsing ---
+    parser = argparse.ArgumentParser(description="Tic Tac Toe Networked Client")
+    parser.add_argument(
+        '--host',
+        type=str,
+        default='127.0.0.1',  # Default to localhost if no host is provided
+        help='The IP address of the server host.'
+    )
+    args = parser.parse_args()
+    # --- End Argument Parsing ---
+    # Pass the parsed host IP to the main function
+    asyncio.run(main(args.host))
